@@ -1,0 +1,32 @@
+name: Hausmeister Archiving
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight
+  workflow_dispatch: # Allows you to manually trigger the action
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14' # Specify the Node.js version you want to use
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run Hausmeister
+      run: node index.js
+      env:
+        HM_SLACK_BEARER_TOKEN: ${{ secrets.HM_SLACK_BEARER_TOKEN }}
+        HM_SLACK_SIGNING_SECRET: ${{ secrets.HM_SLACK_SIGNING_SECRET }}
+        HM_CHANNEL_REGEX: ${{ secrets.HM_CHANNEL_REGEX }}
+        HM_LAST_MESSAGE_MAX_AGE: ${{ secrets.HM_LAST_MESSAGE_MAX_AGE }}
+        HM_ARCHIVE_CHANNELS: ${{ secrets.HM_ARCHIVE_CHANNELS }}
+        HM_SEND_MESSAGE: ${{ secrets.HM_SEND_MESSAGE }}
